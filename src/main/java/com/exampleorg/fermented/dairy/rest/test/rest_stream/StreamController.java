@@ -89,7 +89,7 @@ public class StreamController {
     @GET
     @Produces({MediaType.TEXT_PLAIN})
     @Path("/stream/numbers/{flushSize}/{max}")
-    public Response readNumberStream(@PathParam("flushSize") int flushSize,@PathParam("max")  int max) {
+    public Response readNumberStream(@PathParam("flushSize") int flushSize, @PathParam("max") int max) {
         log.info("START::readNumberStream");
 
         StreamingOutput stream = new StreamingOutput() {
@@ -133,12 +133,14 @@ public class StreamController {
     @Path("/string")
     public String readFileString() {
         log.info("Rest Call");
-        @Cleanup InputStream loremIS = StreamController.class.getClassLoader().getResourceAsStream("lorem.txt");
-        int c = -1;
-        StringBuilder sb = new StringBuilder();
-        while ((c = loremIS.read()) != -1) {
-            sb.append((char) c);
+        try (InputStream loremIS = StreamController.class.getClassLoader().getResourceAsStream("lorem.txt")) {
+            int c = -1;
+            StringBuilder sb = new StringBuilder();
+            while ((c = loremIS.read()) != -1) {
+                sb.append((char) c);
+            }
+
+            return sb.toString();
         }
-        return sb.toString();
     }
 }
